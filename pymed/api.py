@@ -20,7 +20,7 @@ class PubMed(object):
     """
 
     def __init__(
-        self: object, tool: str = "my_tool", email: str = "my_email@example.com", api_key: str = none) -> None:
+        self: object, tool: str = "my_tool", email: str = "my_email@example.com") -> None:
         """ Initialization of the object.
 
             Parameters:
@@ -43,7 +43,7 @@ class PubMed(object):
         self._requestsMade = []
 
         # Define the standard / default query parameters
-        self.parameters = {"tool": tool, "email": email, "db": "pubmed", "api_key": api_key}
+        self.parameters = {"tool": tool, "email": email, "db": "pubmed"}
 
     def query(self: object, query: str, max_results: int = 100, mindate: str = '1900', maxdate: str = '3000', sort: str = 'relevance'):
         """ Method that executes a query agains the GraphQL schema, automatically
@@ -200,7 +200,7 @@ class PubMed(object):
         parameters["retmax"] = 50000
         parameters["mindate"] = mindate
         parameters['maxdate'] = maxdate
-        parameters['sort'] = sort 
+        parameters['sort'] = sort
 
         # Calculate a cut off point based on the max_results parameter
         if max_results < parameters["retmax"]:
