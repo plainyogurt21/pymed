@@ -20,8 +20,7 @@ class PubMed(object):
     """
 
     def __init__(
-        self: object, tool: str = "my_tool", email: str = "my_email@example.com"
-    ) -> None:
+        self: object, tool: str = "my_tool", email: str = "my_email@example.com", api_key: str = none) -> None:
         """ Initialization of the object.
 
             Parameters:
@@ -44,9 +43,9 @@ class PubMed(object):
         self._requestsMade = []
 
         # Define the standard / default query parameters
-        self.parameters = {"tool": tool, "email": email, "db": "pubmed"}
+        self.parameters = {"tool": tool, "email": email, "db": "pubmed", "api_key": api_key}
 
-    def query(self: object, query: str, max_results: int = 100):
+    def query(self: object, query: str, max_results: int = 100, mindate: str = '1900', maxdate: str = '3000', sort: str = 'relevance'):
         """ Method that executes a query agains the GraphQL schema, automatically
             inserting the PubMed data loader.
 
@@ -59,7 +58,7 @@ class PubMed(object):
         """
 
         # Retrieve the article IDs for the query
-        article_ids = self._getArticleIds(query=query, max_results=max_results)
+        article_ids = self._getArticleIds(query=query, max_results=max_results, mindate = mindate, maxdate = maxdate, sort = sort)
 
         # Get the articles themselves
         articles = list(
@@ -179,7 +178,7 @@ class PubMed(object):
         for book in root.iter("PubmedBookArticle"):
             yield PubMedBookArticle(xml_element=book)
 
-    def _getArticleIds(self: object, query: str, max_results: int) -> list:
+    def _getArticleIds(self: object, query: str, max_results: int,  mindate:str, maxdate: str, sort :str) -> list:
         """ Helper method to retrieve the article IDs for a query.
 
             Parameters:
@@ -199,6 +198,9 @@ class PubMed(object):
         # Add specific query parameters
         parameters["term"] = query
         parameters["retmax"] = 50000
+        parameters["mindate"] = mindate
+        parameters['maxdate'] = maxdate
+        parameters['sort'] = sort 
 
         # Calculate a cut off point based on the max_results parameter
         if max_results < parameters["retmax"]:
